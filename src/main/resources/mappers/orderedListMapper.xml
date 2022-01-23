@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.map.orderedList.dao.OrderedListDAO">
+	<insert id="insertOrder" parameterType="map">
+		INSERT INTO `ordered_list`
+		(`storeId`, `address`, `orderCount`, `latitude`, `longtitude`)
+		VALUES
+		(#{storeId}, #{address}, 1, #{latitude}, #{longtitude})
+	</insert>
+	
+	<select id="existAddress" resultType="boolean" parameterType="map">
+		SELECT
+			count(1)
+		FROM
+			`ordered_list`
+		WHERE
+			`address` = #{address}
+			and `storeId` = #{storeId}
+	</select>
+	
+	<update id="updateOrder" parameterType="map">
+		UPDATE `ordered_list`
+		SET
+			`orderCount` = `orderCount` + 1,
+			`updatedAt` = NOW()
+		WHERE
+			`address` = #{address}
+			and `storeId` = #{storeId}
+	</update>
+	
+	<select id="selectOrderedListByStoreId" resultType="com.map.orderedList.model.OrderedList">
+		SELECT
+			`id`
+			,`storeId`
+			,`address`
+			,`orderCount`
+			,`latitude`
+			,`longtitude`
+			,`createdAt`
+			,`updatedAt`
+		FROM
+			`ordered_list`
+		WHERE
+			`storeId` = #{storeId}
+		ORDER BY `latitude`, `longtitude`
+	</select>
+	
+	<update id="updateOrderCountById" parameterType="hashmap">
+		UPDATE `ordered_list`
+		SET
+			`orderCount` = #{orderCount}
+			,`updatedAt` = NOW()
+		WHERE
+			`id` = #{id}
+	</update>
+	
+	<delete id="deleteOrderedListById">
+		DELETE
+		FROM
+			`ordered_list`
+		WHERE
+			`id` = #{id}
+	</delete>
+	
+	<select id="selectOrderedList" resultType="com.map.orderedList.model.OrderedList">
+		SELECT
+			`id`
+			,`storeId`
+			,`address`
+			,`orderCount`
+			,`latitude`
+			,`longtitude`
+			,`createdAt`
+			,`updatedAt`
+		FROM
+			`ordered_list`
+		ORDER BY `storeId`
+	</select>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.map.store.dao.StoreDAO">
+	<select id="selectStore" resultType="com.map.store.model.Store">
+		SELECT
+			`id`,
+			`storeName`,
+			`isUse`,
+			`createdAt`,
+			`updatedAt`
+		FROM
+			`store`
+	</select>
+	
+	<select id="selectStoreIsUse" resultType="com.map.store.model.Store">
+		SELECT
+			`id`,
+			`storeName`,
+			`isUse`,
+			`createdAt`,
+			`updatedAt`
+		FROM
+			`store`
+		WHERE
+			`isUse` = true
+	</select>
+	
+	<update id="deleteStore">
+		UPDATE `store`
+		SET
+			`isUse` = false,
+			`updatedAt` = NOW()
+		WHERE
+			<foreach collection="list" item="item" separator="or">
+				`id` = #{item}
+			</foreach>
+	</update>
+	
+	<insert id="insertStore" parameterType="java.util.List">
+		INSERT INTO `store`
+		(`storeName`)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+		(#{item})
+		</foreach>
+	</insert>
+</mapper>
