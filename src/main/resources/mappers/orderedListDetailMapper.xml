@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.map.orderedListDetail.dao.OrderedListDetailDAO">
+	<insert id="insertOrderedListDetail">
+		INSERT INTO `ordered_list_detail`
+		(`orderId`)
+		VALUES
+		(#{orderId})
+	</insert>
+	
+	<select id="selectOrderedListDetailByOrderId" resultType="com.map.orderedListDetail.model.OrderedListDetail">
+		SELECT
+			`id`
+			,`orderId`
+			,`orderStatus`
+			,`createdAt`
+			,`updatedAt`
+		FROM
+			`ordered_list_detail`
+		WHERE
+			`orderId` = #{orderId}
+	</select>
+	
+	<delete id="deleteOrderedListDetailByOrderId">
+		DELETE
+		FROM
+			`ordered_list_detail`
+		WHERE
+			`orderId` = #{orderId}
+	</delete>
+	
+	<select id="selectOrderedListDetailByDate" parameterType="map" resultType="com.map.orderedListDetail.model.OrderedListDetail">
+		SELECT
+			`id`
+			,`orderId`
+			,`orderStatus`
+			,`createdAt`
+			,`updatedAt`
+		FROM
+			`ordered_list_detail`
+		WHERE
+			`orderId` = #{orderId}
+			AND date_format(updatedAt, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate};
+	</select>
+</mapper>

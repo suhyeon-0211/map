@@ -1,7 +1,6 @@
 package com.map.orderedList.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -15,14 +14,30 @@ public interface OrderedListDAO {
 			@Param("address") String address, 
 			@Param("latitude") double latitude, 
 			@Param("longtitude") double longtitude);
-	public boolean existAddress(
+	public OrderedList existAddress(
 			@Param("storeId") int storeId,
 			@Param("address") String address);
+	public boolean existOrder(int id);
+	
 	public void updateOrder(
-			@Param("storeId") int storeId,
+			@Param("id") int id,
 			@Param("address") String address);
+
+	/*
+	 * public void updateOrder(
+	 * 
+	 * @Param("storeId") int storeId,
+	 * 
+	 * @Param("address") String address);
+	 */
 	public List<OrderedList> selectOrderedListByStoreId(int storeId);
-	public void updateOrderCountById(Map<String, Integer> orderCountMap);
+
+	/* public void updateOrderCountById(Map<String, Object> orderCountMap); */
 	public void deleteOrderedListById(int id);
 	public List<OrderedList> selectOrderedList();
+	public OrderedList selectOrderedListById(Object id);
+	public List<OrderedList> selectOrderedListByDate(
+			@Param("storeId") int storeId,
+			@Param("startDate") String startDate,
+			@Param("endDate") String endDate);
 }

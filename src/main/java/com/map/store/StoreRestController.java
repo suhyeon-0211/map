@@ -19,10 +19,14 @@ public class StoreRestController {
 	
 	@PostMapping("/store/change")
 	public Map<String, Object> storeUpdate(
-			@RequestParam("storeList[]") List<String> storeList) {
+			@RequestParam("storeList[]") List<String> storeList,
+			@RequestParam("storeIdList[]") List<Integer> storeIdList,
+			@RequestParam("userId") Integer userId) {
 		
 		// db update
-		storeBO.updateStore(storeList);
+		if (userId != null) {
+			storeBO.updateStore(storeList, storeIdList, userId);
+		}
 		
 		Map<String, Object> result = new HashMap<>();
 		result.put("result", "success");

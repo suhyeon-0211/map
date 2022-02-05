@@ -5,6 +5,7 @@
 	<select id="selectStore" resultType="com.map.store.model.Store">
 		SELECT
 			`id`,
+			`userId`,
 			`storeName`,
 			`isUse`,
 			`createdAt`,
@@ -16,6 +17,7 @@
 	<select id="selectStoreIsUse" resultType="com.map.store.model.Store">
 		SELECT
 			`id`,
+			`userId`,
 			`storeName`,
 			`isUse`,
 			`createdAt`,
@@ -24,6 +26,7 @@
 			`store`
 		WHERE
 			`isUse` = true
+			AND `userId` = #{userId}
 	</select>
 	
 	<update id="deleteStore">
@@ -37,12 +40,21 @@
 			</foreach>
 	</update>
 	
-	<insert id="insertStore" parameterType="java.util.List">
+	<insert id="insertStore" parameterType="map">
 		INSERT INTO `store`
-		(`storeName`)
+		(`userId` ,`storeName`)
 		VALUES
-		<foreach collection="list" item="item" separator=",">
-		(#{item})
+		<foreach collection="storeList" item="item" separator=",">
+		(#{userId} , #{item})
 		</foreach>
 	</insert>
+	
+	<update id="updateStore" parameterType="map">
+		UPDATE `store`
+		SET
+			`storeName` = #{address}
+			,`updatedAt` = NOW()
+		WHERE
+			`id` = #{id}
+	</update>
 </mapper>

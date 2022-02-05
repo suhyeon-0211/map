@@ -1,5 +1,6 @@
 package com.map.orderedList;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,20 +48,19 @@ public class OrderedListRestController {
 	@PostMapping("/order/update")
 	public Map<String, Object> OrderUpdate(
 			@RequestParam("idList[]") List<Integer> idList,
-			@RequestParam("valueList[]") List<Integer> orderCountList) {
-		
+			@RequestParam("addressList[]") List<String> addressList) {
 		
 		// db update
-		List<Map<String, Integer>> orderCountUpdateList = new ArrayList<>();
-		Map<String, Integer> tempMap = new HashMap<>();
+		List<Map<String, Object>> orderCountUpdateList = new ArrayList<>();
+		Map<String, Object> tempMap = new HashMap<>();
 		for(int i = 0; i < idList.size(); i++) {
 			tempMap = new HashMap<>();
 			tempMap.put("id", idList.get(i));
-			tempMap.put("orderCount", orderCountList.get(i));
+			tempMap.put("address", addressList.get(i));
 			orderCountUpdateList.add(tempMap);
 		}
 		
-		orderedListBO.updateOrderCountById(orderCountUpdateList);
+		orderedListBO.updateOrderById(orderCountUpdateList);
 		
 		Map<String, Object> result = new HashMap<>();
 		result.put("result", "success");
@@ -72,7 +72,7 @@ public class OrderedListRestController {
 			@RequestParam("id") Integer id) {
 		
 		// db delete
-		if (id != null) {
+		if (id != null && id != 0) {
 			orderedListBO.deleteOrderedListById(id);
 		}
 		
@@ -80,4 +80,34 @@ public class OrderedListRestController {
 		result.put("result", "success");
 		return result;
 	}
+	
+	@PostMapping("/order/select_by_date")
+	public Map<String, Object> selectOrderedListByDate(
+			@RequestParam("startDate") String startDate,
+			@RequestParam("endDate") String endDate,
+			@RequestParam("storeId") int storeId) throws ParseException {
+		/*
+		 * SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd (EEE)"); Date
+		 * tempStartDate = sdf.parse(startDate); Date tempEndDate = sdf.parse(endDate);
+		 */
+		
+		Map<String, Object> result = new HashMap<>();
+		// db select
+		result.put("result", orderedListBO.getOrderedListByDate(storeId, startDate, endDate));
+		return result;
+	}
+	
+	@PostMapping("/order/add")
+	public Map<String, Object> AddOrder(
+			@RequestParam("id") Integer id) {
+		
+		if (id != null) {
+			orderedListBO.addOrder(id);
+		}
+		
+		Map<String, Object> result = new HashMap<>();
+		result.put("result", "success");
+		return result;
+	}
+	
 }

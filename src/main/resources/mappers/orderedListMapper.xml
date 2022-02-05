@@ -4,29 +4,49 @@
 <mapper namespace="com.map.orderedList.dao.OrderedListDAO">
 	<insert id="insertOrder" parameterType="map">
 		INSERT INTO `ordered_list`
-		(`storeId`, `address`, `orderCount`, `latitude`, `longtitude`)
+		(`storeId`, `address`, `latitude`, `longtitude`)
 		VALUES
-		(#{storeId}, #{address}, 1, #{latitude}, #{longtitude})
+		(#{storeId}, #{address}, #{latitude}, #{longtitude})
 	</insert>
 	
-	<select id="existAddress" resultType="boolean" parameterType="map">
-		SELECT
+	<select id="existAddress" resultType="com.map.orderedList.model.OrderedList" parameterType="map">
+		<!-- SELECT
 			count(1)
 		FROM
 			`ordered_list`
 		WHERE
 			`address` = #{address}
-			and `storeId` = #{storeId}
+			and `storeId` = #{storeId} -->
+		SELECT
+			`id`
+			,`storeId`
+			,`address`
+			,`latitude`
+			,`longtitude`
+			,`createdAt`
+			,`updatedAt`
+		FROM
+			`ordered_list`
+		WHERE
+			`storeId` = #{storeId} AND `address` = #{address}
+	</select>
+	
+	<select id="existOrder" resultType="boolean">
+		SELECT
+			count(1)
+		FROM
+			`ordered_list`
+		WHERE
+			`id` = #{id}
 	</select>
 	
 	<update id="updateOrder" parameterType="map">
 		UPDATE `ordered_list`
 		SET
-			`orderCount` = `orderCount` + 1,
+			`address` = #{address},
 			`updatedAt` = NOW()
 		WHERE
-			`address` = #{address}
-			and `storeId` = #{storeId}
+			`id` = #{id}
 	</update>
 	
 	<select id="selectOrderedListByStoreId" resultType="com.map.orderedList.model.OrderedList">
@@ -34,7 +54,6 @@
 			`id`
 			,`storeId`
 			,`address`
-			,`orderCount`
 			,`latitude`
 			,`longtitude`
 			,`createdAt`
@@ -46,14 +65,14 @@
 		ORDER BY `latitude`, `longtitude`
 	</select>
 	
-	<update id="updateOrderCountById" parameterType="hashmap">
+	<!-- <update id="updateOrderCountById" parameterType="hashmap">
 		UPDATE `ordered_list`
 		SET
 			`orderCount` = #{orderCount}
 			,`updatedAt` = NOW()
 		WHERE
 			`id` = #{id}
-	</update>
+	</update> -->
 	
 	<delete id="deleteOrderedListById">
 		DELETE
@@ -68,7 +87,6 @@
 			`id`
 			,`storeId`
 			,`address`
-			,`orderCount`
 			,`latitude`
 			,`longtitude`
 			,`createdAt`
@@ -76,5 +94,37 @@
 		FROM
 			`ordered_list`
 		ORDER BY `storeId`
+	</select>
+	
+	<select id="selectOrderedListById" resultType="com.map.orderedList.model.OrderedList">
+		SELECT
+			`id`
+			,`storeId`
+			,`address`
+			,`latitude`
+			,`longtitude`
+			,`createdAt`
+			,`updatedAt`
+		FROM
+			`ordered_list`
+		WHERE
+			`id` = #{id}
+	</select>
+	
+	<select id="selectOrderedListByDate" parameterType="map" resultType="com.map.orderedList.model.OrderedList">
+		SELECT
+			`id`
+			,`storeId`
+			,`address`
+			,`latitude`
+			,`longtitude`
+			,`createdAt`
+			,`updatedAt`
+		FROM
+			`ordered_list`
+		WHERE
+			`storeId` = #{storeId}
+			AND date_format(updatedAt, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate};
+		ORDER BY `latitude`, `longtitude`
 	</select>
 </mapper>

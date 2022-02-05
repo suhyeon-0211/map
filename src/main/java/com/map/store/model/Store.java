@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Store {
 	private int id;
+	private int userId;
 	private String storeName;
 	private int isUse;
 	private Date createdAt;	
@@ -14,6 +15,12 @@ public class Store {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	public String getStoreName() {
 		return storeName;

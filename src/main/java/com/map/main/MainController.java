@@ -1,9 +1,12 @@
 package com.map.main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,8 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.map.orderedList.bo.OrderedListBO;
-import com.map.orderedList.model.OrderedList;
+import com.map.main.bo.MainBO;
+import com.map.main.model.ExcelDownloadModel;
 import com.map.store.bo.StoreBO;
 import com.map.store.model.Store;
 
@@ -28,19 +31,27 @@ public class MainController {
 	private StoreBO storeBO;
 	
 	@Autowired
-	private OrderedListBO orderedListBO;
+	private MainBO mainBO;
 	
 	@RequestMapping("/main")
-	public String main(Model model) {
-		List<Store> storeList = storeBO.getStoreIsUse();
+	public String main(Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		List<Store> storeList = new ArrayList<>();
+		if (userId != null) {
+			storeList = storeBO.getStoreIsUse(userId);
+		}
 		
 		model.addAttribute("storeList", storeList);
 		return "map/main";
 	}
 	
 	@GetMapping("/excel/download")
-    public void excelDownload(HttpServletResponse response) throws IOException {
-		List<OrderedList> orderedList = orderedListBO.getOrderedList();
+    public void excelDownload(HttpServletResponse response, HttpServletRequest request) throws IOException {
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		
+		List<ExcelDownloadModel> ExcelDownloadModelList = mainBO.getExcelDownloadModel(userId);
 		
         Workbook wb = new XSSFWorkbook();
         Sheet sheet =  wb.createSheet("첫번째 시트");
@@ -51,47 +62,36 @@ public class MainController {
         // Header
         row = sheet.createRow(rowNum++);
         cell = row.createCell(0);
-        cell.setCellValue("id");
+        cell.setCellValue("로그인 아이디");
         cell = row.createCell(1);
-        cell.setCellValue("storeId");
+        cell.setCellValue("사용자 이름");
         cell = row.createCell(2);
-        cell.setCellValue("address");
+        cell.setCellValue("매장 이름");
         cell = row.createCell(3);
-        cell.setCellValue("orderCount");
+        cell.setCellValue("주문 주소");
         cell = row.createCell(4);
-        cell.setCellValue("latitude");
-        cell = row.createCell(5);
-        cell.setCellValue("longtitude");
-        cell = row.createCell(6);
-        cell.setCellValue("createdAt");
-        cell = row.createCell(7);
-        cell.setCellValue("updatedAt");
+        cell.setCellValue("주문 날짜");
 
         // Body
-        for (int i=0; i<orderedList.size(); i++) {
+        for (int i=0; i< ExcelDownloadModelList.size(); i++) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
-            cell.setCellValue(orderedList.get(i).getId());
+            cell.setCellValue(ExcelDownloadModelList.get(i).getLoginId());
             cell = row.createCell(1);
-            cell.setCellValue(orderedList.get(i).getStoreId());
+            cell.setCellValue(ExcelDownloadModelList.get(i).getName());
             cell = row.createCell(2);
-            cell.setCellValue(orderedList.get(i).getAddress());
+            cell.setCellValue(ExcelDownloadModelList.get(i).getStoreName());
             cell = row.createCell(3);
-            cell.setCellValue(orderedList.get(i).getOrderCount());
+            cell.setCellValue(ExcelDownloadModelList.get(i).getAddress());
             cell = row.createCell(4);
-            cell.setCellValue(orderedList.get(i).getLatitude());
+            cell.setCellValue(ExcelDownloadModelList.get(i).getCreatedAt());
             cell = row.createCell(5);
-            cell.setCellValue(orderedList.get(i).getLongtitude());
-            cell = row.createCell(6);
-            cell.setCellValue(orderedList.get(i).getCreatedAt());
-            cell = row.createCell(7);
-            cell.setCellValue(orderedList.get(i).getUpdatedAt());
         }
 
         // 컨텐츠 타입과 파일명 지정
         response.setContentType("ms-vnd/excel");
 //        response.setHeader("Content-Disposition", "attachment;filename=example.xls");
-        response.setHeader("Content-Disposition", "attachment;filename=ordered_list_database.xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=ExcelDownloadModelList_database.xlsx");
 
         // Excel File Output
         wb.write(response.getOutputStream());

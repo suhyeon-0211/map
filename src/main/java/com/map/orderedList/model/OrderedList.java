@@ -6,7 +6,6 @@ public class OrderedList {
 	private int id;
 	private int storeId;
 	private String address;
-	private int orderCount;
 	private double latitude;
 	private double longtitude;
 	private Date createdAt;
@@ -28,12 +27,6 @@ public class OrderedList {
 	}
 	public void setAddress(String address) {
 		this.address = address;
-	}
-	public int getOrderCount() {
-		return orderCount;
-	}
-	public void setOrderCount(int orderCount) {
-		this.orderCount = orderCount;
 	}
 	public double getLatitude() {
 		return latitude;
